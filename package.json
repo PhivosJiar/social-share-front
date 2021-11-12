@@ -11,7 +11,7 @@
     "test": "ng test",
     "dev:ssr": "ng run MabowShare:serve-ssr",
     "serve:ssr": "node dist/MabowShare/server/main.js",
-    "build:ssr": "ng build && ng run MabowShare:server",
+    "build:ssr": "ng build --prod && ng run MabowShare:server:production",
     "prerender": "ng run MabowShare:prerender"
   },
   "private": true,
