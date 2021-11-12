@@ -12,8 +12,8 @@ import { IReqShareInfo, IRespSahreInfo } from './service/interface'
 export class AppComponent implements OnInit {
   title = 'MabowShare';
   // 需要拿去查詢Share Info的object
-  shareObject = {
-    "postId": ''
+  shareObject: IReqShareInfo = {
+    postId: ''
   }
 
   // 接收回來的Share Info
@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
     this.router.queryParams.subscribe((res: any) => {
       this.shareService.setProductName(res.prod);
       if (res.prod) {
-        this.shareObject.postId = res.objId;
+        this.shareObject!.postId = res.objId;
         this.getShareInfo();
       }
     });
