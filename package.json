@@ -2,6 +2,8 @@
   "name": "mabow-share",
   "version": "0.0.0",
   "scripts": {
+    "start:heroku":"node dist/server",
+    "postinstall":"npm run build:ssr",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -24,7 +26,8 @@
     "@angular/platform-server": "~13.0.0",
     "@angular/router": "~13.0.0",
     "@nguniversal/express-engine": "^13.0.1",
-    "express": "^4.15.2",
+    "express": "^4.17.1",
+    "path": "^0.12.7",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
