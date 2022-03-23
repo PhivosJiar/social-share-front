@@ -3,10 +3,12 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
-
+import { initParse } from './app/utils/init'
 if (environment.production) {
   enableProdMode();
 }
+
+initParse();
 
 function bootstrap() {
   platformBrowserDynamic().bootstrapModule(AppModule)

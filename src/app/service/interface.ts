@@ -11,7 +11,7 @@ export interface IReqShareInfo {
  */
 export interface IRespSahreInfo {
     title: string,
-    image: string,
+    imageUrl: string,
     description?: string
 }
 

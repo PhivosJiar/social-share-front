@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UpdateMetaTagService } from './service/update-meta-tag.service';
 import { QueryShareInfoService } from './service/query-share-info.service';
-import { IReqShareInfo, IRespSahreInfo } from './service/interface'
+import { IRespSahreInfo } from './service/interface'
 
 @Component({
   selector: 'app-root',
@@ -11,13 +11,9 @@ import { IReqShareInfo, IRespSahreInfo } from './service/interface'
 })
 export class AppComponent implements OnInit {
   title = 'MabowShare';
-  // 需要拿去查詢Share Info的object
-  shareObject: IReqShareInfo = {
-    postId: ''
-  }
 
-  // 接收回來的Share Info
-  respSahreInfo: IRespSahreInfo | undefined;
+  private pageObjectId: string = '';
+
   constructor(
     private router: ActivatedRoute,
     private shareService: QueryShareInfoService,
@@ -25,36 +21,41 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.decodeUrl();
+    // document.location.href="https://www.google.com/";
+    this.initData();
   }
 
+  private async initData() {
+    this.decodeUrl();
+    const socialShareInfo = await this.getSocialShareInfo();
+    this.updateMetaTag(socialShareInfo);
+  }
   /**
-   * 解析網址並取得share Info
+   * 解析網址
    */
   private decodeUrl(): void {
-    this.router.queryParams.subscribe((res: any) => {
-      this.shareService.setProductName(res.prod);
-      if (res.prod) {
-        this.shareObject!.postId = res.objId;
-        this.getShareInfo();
-      }
-    });
+    this.pageObjectId = location.pathname.replace('/', '');
   }
 
   /**
-   * 取得後端取回分享資料
+   * 取得社群分享title、imageUrl、description資訊
    */
-  private getShareInfo(): void {
-    this.shareService.getShareInfo(this.shareObject!).subscribe(res => {
-      this.respSahreInfo = res;
-      this.updateMetaTag();
-    });
+  private async getSocialShareInfo() {
+    const a = await this.shareService.getShareInfo(this.pageObjectId);
+    const { title, imageUrl, description } = a!.attributes;
+    const param: IRespSahreInfo = {
+      title,
+      imageUrl,
+      description
+    }
+
+    return param;
   }
 
   /**
    *  更新meta tag
    */
-  private updateMetaTag(): void {
-    this.metaTagService.updateTag(this.respSahreInfo!)
+  private updateMetaTag(socialShareInfo: IRespSahreInfo): void {
+    this.metaTagService.updateTag(socialShareInfo)
   }
 }
