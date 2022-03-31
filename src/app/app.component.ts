@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { UpdateMetaTagService } from './service/update-meta-tag.service';
 import { QueryShareInfoService } from './service/query-share-info.service';
 import { IReqShareInfo, IRespSahreInfo } from './service/interface'
+import { ActivatedRoute, Route } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -10,44 +10,46 @@ import { IReqShareInfo, IRespSahreInfo } from './service/interface'
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'MabowShare';
+  title = 'SocialShare';
   // 需要拿去查詢Share Info的object
-  shareObject: IReqShareInfo = {
-    postId: ''
+  private requstInfo: IReqShareInfo = {
+    objectId: ''
   }
 
   // 接收回來的Share Info
   respSahreInfo: IRespSahreInfo | undefined;
+
   constructor(
-    private router: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
+    // private router: Route,
     private shareService: QueryShareInfoService,
     private metaTagService: UpdateMetaTagService
   ) { }
 
   ngOnInit(): void {
-    this.decodeUrl();
+    this.decodeObjectIdFromUrl();
+
+    this.getShareInfo();
   }
 
   /**
-   * 解析網址並取得share Info
+   * 解析網址取得objectId
    */
-  private decodeUrl(): void {
-    this.router.queryParams.subscribe((res: any) => {
-      this.shareService.setProductName(res.prod);
-      if (res.prod) {
-        this.shareObject!.postId = res.objId;
-        this.getShareInfo();
-      }
-    });
+  private decodeObjectIdFromUrl(): void {
+    this.activatedRoute.url.forEach(item => {
+      this.requstInfo.objectId = item[0].path;
+    })
   }
 
   /**
    * 取得後端取回分享資料
    */
   private getShareInfo(): void {
-    this.shareService.getShareInfo(this.shareObject!).subscribe(res => {
+    this.shareService.getShareInfo(this.requstInfo!).subscribe(res => {
       this.respSahreInfo = res;
       this.updateMetaTag();
+      // location.replace(this.respSahreInfo.targetUrl);
+      location.href = this.respSahreInfo.targetUrl;
     });
   }
 

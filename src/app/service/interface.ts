@@ -3,7 +3,7 @@
  */
 export interface IReqShareInfo {
     //給後端查詢的objectId
-    postId: string
+    objectId: string
 }
 
 /**
@@ -11,7 +11,8 @@ export interface IReqShareInfo {
  */
 export interface IRespSahreInfo {
     title: string,
-    image: string,
-    description?: string
+    imageUrl: string,
+    targetUrl: string,
+    description?: string,
 }
 

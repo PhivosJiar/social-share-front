@@ -17,18 +17,18 @@ export class UpdateMetaTagService {
    * @param description (非必填)string 用於更新og:description
    * @todo description目前在facebook分享不會顯示
    */
-  public updateTag(shareInfo:IRespSahreInfo): void {
+  public updateTag(shareInfo: IRespSahreInfo): void {
     console.log(shareInfo)
     this.metaService.updateTag({
       property: 'og:title', content: shareInfo.title
     })
     this.metaService.updateTag({
-      property: 'og:image', content: shareInfo.image
+      property: 'og:image', content: shareInfo.imageUrl
     })
 
     if (shareInfo.description) {
       this.metaService.updateTag({
-        property: 'og:description', content: shareInfo.description 
+        property: 'og:description', content: shareInfo.description
       })
     }
   }
