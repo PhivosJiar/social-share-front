@@ -21,14 +21,12 @@ export class AppComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    // private router: Route,
     private shareService: QueryShareInfoService,
     private metaTagService: UpdateMetaTagService
   ) { }
 
   ngOnInit(): void {
     this.decodeObjectIdFromUrl();
-
     this.getShareInfo();
   }
 
@@ -45,11 +43,13 @@ export class AppComponent implements OnInit {
    * 取得後端取回分享資料
    */
   private getShareInfo(): void {
+    if (!this.requstInfo.objectId) {
+      return;
+    }
+
     this.shareService.getShareInfo(this.requstInfo!).subscribe(res => {
       this.respSahreInfo = res;
       this.updateMetaTag();
-      // location.replace(this.respSahreInfo.targetUrl);
-      location.href = this.respSahreInfo.targetUrl;
     });
   }
 

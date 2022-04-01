@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, observable } from 'rxjs';
 import { IReqShareInfo, IRespSahreInfo } from './interface'
 
-const GET_SHARE_INFO = "http://50.19.183.134:8082/find_preview_info"
+const GET_SHARE_INFO = "http://socialshare.link:8082/find_preview_info"
 @Injectable({
   providedIn: 'root'
 })
@@ -14,7 +14,7 @@ export class QueryShareInfoService {
   ) { }
 
   /**
-   * 
+   * call api 取得分享連結預覽資訊
    * @param requstInfo 
    */
   public getShareInfo(requstInfo: IReqShareInfo): Observable<IRespSahreInfo> {

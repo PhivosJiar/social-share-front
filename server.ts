@@ -7,6 +7,41 @@ import { join } from 'path';
 import { AppServerModule } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
 import { existsSync } from 'fs';
+import { applyDomino } from '@ntegral/ngx-universal-window';
+import { QueryShareInfoService } from 'src/app/service/query-share-info.service';
+const bodyParser = require('body-parser')
+const BROWSER_DIR = join(process.cwd(), 'dist/MabowShare/browser');
+applyDomino(global, join(BROWSER_DIR, 'index.html'));
+import { request } from 'http';
+const http = require('http');
+const isBot = (req: any) => {
+  /**
+   * A default set of user agent patterns for bots/crawlers that do not perform
+   * well with pages that require JavaScript.
+   */
+  const botUserAgents = [
+    'baiduspider',
+    'bingbot',
+    'embedly',
+    'facebookexternalhit',
+    'linkedinbot',
+    'outbrain',
+    'pinterest',
+    'quora link preview',
+    'rogerbot',
+    'showyoubot',
+    'slackbot',
+    'twitterbot',
+    'vkShare',
+    'W3C_Validator',
+    'whatsapp'
+  ];
+
+  const userAgentPattern = new RegExp(botUserAgents.join('|'), 'i');
+
+  let ua = req.headers['user-agent'];
+  return ua !== undefined && userAgentPattern.test(ua);
+};
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -29,9 +64,49 @@ export function app(): express.Express {
     maxAge: '1y'
   }));
 
+  server.use(bodyParser.text({ type: '*/*' }))
+
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
-    res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });
+    if (isBot(req)) {
+      res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl, res: res }] });
+    } else {
+      const url = req.url.replace('/', '');
+      const data = JSON.stringify({ objectId: url })
+      const options = {
+        hostname: 'socialshare.link',
+        port: 8082,
+        path: '/find_preview_info',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+      const request = http.request(options, (resp: any) => {
+
+        var chunks: any[] = [];
+        resp.on('data', (chunk: any) => {
+          chunks.push(chunk);
+        })
+        resp.on("end", () => {
+          var body: any = Buffer.concat(chunks);
+          var json_object: any = JSON.parse(body);
+
+          //console.log(json_object);
+          console.log(json_object.targetUrl);
+          res.redirect(json_object.targetUrl);
+        });
+      })
+
+      request.on('error', (error: any) => {
+        console.error(error)
+      })
+      console.log(data)
+
+      request.write(data)
+      request.end()
+
+    }
   });
 
   return server;
