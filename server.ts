@@ -7,12 +7,7 @@ import { join } from 'path';
 import { AppServerModule } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
 import { existsSync } from 'fs';
-import { applyDomino } from '@ntegral/ngx-universal-window';
-import { QueryShareInfoService } from 'src/app/service/query-share-info.service';
-const bodyParser = require('body-parser')
-const BROWSER_DIR = join(process.cwd(), 'dist/MabowShare/browser');
-applyDomino(global, join(BROWSER_DIR, 'index.html'));
-import { request } from 'http';
+
 const http = require('http');
 const isBot = (req: any) => {
   /**
@@ -58,13 +53,9 @@ export function app(): express.Express {
   server.set('views', distFolder);
 
   // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
-  // Serve static files from /browser
   server.get('*.*', express.static(distFolder, {
     maxAge: '1y'
   }));
-
-  server.use(bodyParser.text({ type: '*/*' }))
 
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
@@ -92,7 +83,6 @@ export function app(): express.Express {
           var body: any = Buffer.concat(chunks);
           var json_object: any = JSON.parse(body);
 
-          //console.log(json_object);
           console.log(json_object.targetUrl);
           res.redirect(json_object.targetUrl);
         });
