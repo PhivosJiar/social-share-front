@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, observable } from 'rxjs';
 import { IReqShareInfo, IRespSahreInfo } from './interface'
 
-const GET_SHARE_INFO = "http://socialshare.link:8082/find_preview_info"
+const GET_SHARE_INFO = "https://socialshare.link/api/generator_url/find_preview_info"
 @Injectable({
   providedIn: 'root'
 })
